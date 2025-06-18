@@ -1,30 +1,33 @@
-FROM eclipse-temurin:17-jdk-alpine as build
-WORKDIR /workspace/app
 
-# Copy maven executable and pom.xml
+#Use the official OpenJDK base image
+FROM openjdk:19-jdk-slim
+#Use the official OpenJDK base image
+
+#Metadata as described above
+LABEL maintainer = "constantin.nimigean@gmail.com"
+LABEL version = "1.0"
+LABEL description = "Docker image for kube-land Srping boot application"
+
+#Set the current working directory inside the image
+WORKDIR /app
+EXPOSE 8083
+
+#Copy maven execeutable to the image
 COPY mvnw .
 COPY .mvn .mvn
 COPY pom.xml .
 
-# Build dependencies
+#Asigura-te ca mvnw are permisiuni de executie
+RUN chmod +x mvnw
+
+#Build all the dependencies in preparation to go offline
 RUN ./mvnw dependency:go-offline -B
 
-# Copy source code
+#Copy the project source
 COPY src src
 
-# Build the application
+#Package the application
 RUN ./mvnw package -DskipTests
-RUN mkdir -p target/dependency && (cd target/dependency; jar -xf ../*.jar)
 
-# Production stage
-FROM eclipse-temurin:17-jre-alpine
-VOLUME /tmp
-ARG DEPENDENCY=/workspace/app/target/dependency
-
-# Copy application dependencies
-COPY --from=build ${DEPENDENCY}/BOOT-INF/lib /app/lib
-COPY --from=build ${DEPENDENCY}/META-INF /app/META-INF
-COPY --from=build ${DEPENDENCY}/BOOT-INF/classes /app
-
-# Set the entrypoint
-ENTRYPOINT ["java","-cp","app:app/lib/*","com.example.notifications.NotificationsApplication"]
+#Specify the start command and entry point of the Spring Boot application
+ENTRYPOINT ["java","-jar","/app/target/notifications-0.0.1-SNAPSHOT.jar"]
