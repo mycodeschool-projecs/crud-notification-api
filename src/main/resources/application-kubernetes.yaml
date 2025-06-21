@@ -34,6 +34,17 @@ management:
     tracing:
       endpoint: http://zipkin:9411/api/v2/spans
 
+logging:
+  level:
+    root: INFO
+    com.example.notifications: DEBUG
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
+  logstash:
+    enabled: true
+    destination: logstash:5044
+    level: ALL
+
 springdoc:
   api-docs:
     enabled: true
