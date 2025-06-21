@@ -1,0 +1,71 @@
+spring:
+  application:
+    name: notifications-service
+  datasource:
+    url: jdbc:mysql://localhost:3307/crud-notification_db?useUnicode=true&characterEncoding=utf8&useSSL=false&createDatabaseIfNotExist=true&allowPublicKeyRetrieval=true
+    username: root
+    password: root
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQLDialect
+    show-sql: false
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: guest
+    password: guest
+
+server:
+  port: 8083
+
+rabbitmq:
+  queue:
+    name: crud-events-queue
+  exchange:
+    name: crud-events-exchange
+  routing:
+    key: crud.events.#
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,prometheus
+  endpoint:
+    health:
+      show-details: always
+  health:
+    rabbit:
+      enabled: true
+
+logging:
+  level:
+    root: INFO
+    com.example.notifications: DEBUG
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
+  file:
+    name: notifications-service-logs.log
+  logstash:
+    enabled: false
+    destination: localhost:3100
+    level: OFF  # Set to ALL to enable, OFF to disable
+
+cors:
+  allowed-origin: http://localhost:3000
+
+springdoc:
+  api-docs:
+    enabled: true
+  swagger-ui:
+    enabled: true
+    path: /docs
+    operations-sorter: method
+    disable-swagger-default-url: true
+    display-request-duration: true
+  default-consumes-media-type: application/json
+  default-produces-media-type: application/json
