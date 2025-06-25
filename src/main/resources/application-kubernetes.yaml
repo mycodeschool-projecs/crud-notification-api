@@ -1,0 +1,118 @@
+spring:
+  application:
+    name: notifications-service
+
+  datasource:
+    url: jdbc:mysql://mysql-service:3306/testdb?useUnicode=true&characterEncoding=utf8&useSSL=false&createDatabaseIfNotExist=true&allowPublicKeyRetrieval=true
+    username: testuser
+    password: testpass
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate.dialect: org.hibernate.dialect.MySQL8Dialect
+      hibernate.format_sql: true
+    show-sql: true
+
+  security:
+    jwt:
+      - expiration-time: 3600000
+      - secret-key: 3cfa76ef14937c1c0ea519f8fc057a80fcd04a7420f8e8bcd0a7567c272e007b
+
+  rabbitmq:
+    host: rabbitmq
+    port: 5672
+    username: guest
+    password: guest
+    queue:
+      name: crud-events-queue
+    exchange:
+      name: crud-events-exchange
+    routing:
+      key:
+        prefix: crud.events
+
+
+token:
+  signing:
+    key: "3cfa76ef14937c1c0ea519f8fc057a80fcd04a7420f8e8bcd0a7567c272e007b"
+
+cors:
+  allowed-origin: ${ADDITIONAL_CORS_ORIGIN:http://crud-client:3000,http://kube-land:8082,http://react-app.local,http://localhost:3000,http://react-app.local:3000,http://icode.mywire.org,http://icode.mywire.org:3000}
+param:
+  land-name: kube-land
+  land-service: kube-land
+  microserv1-name: kube-ms1
+  microserv1-service: kube-ms1
+  api-service: api-service
+  auth-service-name: kube-auth
+  auth-service: kube-auth
+  notifications-name: kube-notifications
+  notifications-service: notifications-service
+
+#
+#springdoc:
+#  api-docs:
+#    enabled: true  # Enable OpenAPI JSON
+#  swagger-ui:
+#    enabled: true  # Enable Swagger UI
+#    path: /docs  # Path where Swagger can be accessed
+#    operations-sorter: method  # Sort endpoints by HTTP method
+#    disable-swagger-default-url: true
+#    display-request-duration: true
+#  default-consumes-media-type: application/json
+#  default-produces-media-type: application/json
+
+server:
+  error:
+    include-binding-errors: always
+    include-message: always
+  port: 8083
+
+management:
+  tracing:
+    sampling:
+      probability: 1.0  # Temporar setează la 100% pentru testare
+  zipkin:
+    tracing:
+      endpoint: http://zipkin:9411/api/v2/spans
+  endpoints:
+    web:
+      exposure:
+        include: health, info, prometheus
+  endpoint:
+    health:
+      show-details: always
+    prometheus:
+      enabled: true
+
+
+
+metrics:
+  distribution:
+    percentiles-histogram:
+      http:
+        server:
+          requests: true
+
+logging:
+  pattern:
+    level: '%5p [${spring.application.name:},%X{traceId:-},%X{spanId:-}]'
+  level:
+    root: debug
+    org.springframework.amqp: info
+  file:
+    name: kube-land-logs.log
+  logstash:
+    enabled: false
+    destination: logstash:3100
+    level: OFF  # Set to ALL to enable, OFF to disable
+
+
+
+# RabbitMQ event publishing configuration
+
