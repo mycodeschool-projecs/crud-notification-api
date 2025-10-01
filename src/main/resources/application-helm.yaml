@@ -3,8 +3,8 @@ spring:
     name: notifications-service
 
   datasource:
-    url: jdbc:mysql://crud-proj-mysql-service:3306/kube_db?useUnicode=true&characterEncoding=utf8&useSSL=false&createDatabaseIfNotExist=true&allowPublicKeyRetrieval=true
-    username: root
+    url: jdbc:mysql://crud-proj-mysql-service:3306/testdb?useUnicode=true&characterEncoding=utf8&useSSL=false&createDatabaseIfNotExist=true&allowPublicKeyRetrieval=true
+    username: testuser
     password: testpass
     driver-class-name: com.mysql.cj.jdbc.Driver
 
