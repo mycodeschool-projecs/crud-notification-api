@@ -98,49 +98,102 @@
         </encoder>
     </appender>
 
-    <!-- Logstash Appender -->
-    <appender name="LOGSTASH" class="net.logstash.logback.appender.LogstashTcpSocketAppender">
-        <destination>${LOGSTASH_DESTINATION}</destination>
-        <includeCallerData>true</includeCallerData>
-        <reconnectionDelay>10 seconds</reconnectionDelay>
-        <connectionTimeout>5 seconds</connectionTimeout>
-        <writeTimeout>5 seconds</writeTimeout>
-        <!-- Don't block the application if Logstash is not available -->
-        <droppedWarnFrequency>5 minutes</droppedWarnFrequency>
-        <droppedWarnMaxBurst>10000</droppedWarnMaxBurst>
-        <encoder class="net.logstash.logback.encoder.LogstashEncoder">
-            <fieldNames>
-                <timestamp>timestamp</timestamp>
-                <version>version</version>
-                <level>level</level>
-                <thread>thread</thread>
-                <logger>logger</logger>
-                <message>message</message>
-                <context>context</context>
-                <mdc>mdc</mdc>
-                <tags>tags</tags>
-                <fields>fields</fields>
-                <stackTrace>stackTrace</stackTrace>
-            </fieldNames>
-            <customFields>{"serviceName": "${SERVICE_NAME}"}</customFields>
-        </encoder>
-    </appender>
+<!--    &lt;!&ndash; Logstash Appender &ndash;&gt;-->
+<!--    <appender name="LOGSTASH" class="net.logstash.logback.appender.LogstashTcpSocketAppender">-->
+<!--        <destination>${LOGSTASH_DESTINATION}</destination>-->
+<!--        <includeCallerData>true</includeCallerData>-->
+<!--        <reconnectionDelay>10 seconds</reconnectionDelay>-->
+<!--        <connectionTimeout>5 seconds</connectionTimeout>-->
+<!--        <writeTimeout>5 seconds</writeTimeout>-->
+<!--        &lt;!&ndash; Don't block the application if Logstash is not available &ndash;&gt;-->
+<!--        <droppedWarnFrequency>5 minutes</droppedWarnFrequency>-->
+<!--        <droppedWarnMaxBurst>10000</droppedWarnMaxBurst>-->
+<!--        <encoder class="net.logstash.logback.encoder.LogstashEncoder">-->
+<!--            <fieldNames>-->
+<!--                <timestamp>timestamp</timestamp>-->
+<!--                <version>version</version>-->
+<!--                <level>level</level>-->
+<!--                <thread>thread</thread>-->
+<!--                <logger>logger</logger>-->
+<!--                <message>message</message>-->
+<!--                <context>context</context>-->
+<!--                <mdc>mdc</mdc>-->
+<!--                <tags>tags</tags>-->
+<!--                <fields>fields</fields>-->
+<!--                <stackTrace>stackTrace</stackTrace>-->
+<!--            </fieldNames>-->
+<!--            <customFields>{"serviceName": "${SERVICE_NAME}"}</customFields>-->
+<!--        </encoder>-->
+<!--    </appender>-->
 
-    <!-- Async Logstash Appender with level filter -->
-    <appender name="ASYNC_LOGSTASH" class="ch.qos.logback.classic.AsyncAppender">
-        <appender-ref ref="LOGSTASH" />
-        <includeCallerData>true</includeCallerData>
-        <queueSize>512</queueSize>
-        <discardingThreshold>0</discardingThreshold>
-        <neverBlock>true</neverBlock>
-        <!-- Simple level filter that denies all events if level is OFF -->
-        <filter class="ch.qos.logback.classic.filter.LevelFilter">
-            <level>${LOGSTASH_LEVEL}</level>
-            <onMatch>ACCEPT</onMatch>
-            <onMismatch>DENY</onMismatch>
-        </filter>
-    </appender>
+<!--    &lt;!&ndash; Async Logstash Appender with level filter &ndash;&gt;-->
+<!--    <appender name="ASYNC_LOGSTASH" class="ch.qos.logback.classic.AsyncAppender">-->
+<!--        <appender-ref ref="LOGSTASH" />-->
+<!--        <includeCallerData>true</includeCallerData>-->
+<!--        <queueSize>512</queueSize>-->
+<!--        <discardingThreshold>0</discardingThreshold>-->
+<!--        <neverBlock>true</neverBlock>-->
+<!--        &lt;!&ndash; Simple level filter that denies all events if level is OFF &ndash;&gt;-->
+<!--        <filter class="ch.qos.logback.classic.filter.LevelFilter">-->
+<!--            <level>${LOGSTASH_LEVEL}</level>-->
+<!--            <onMatch>ACCEPT</onMatch>-->
+<!--            <onMismatch>DENY</onMismatch>-->
+<!--        </filter>-->
+<!--    </appender>-->
 
+    <if condition='property("LOGSTASH_ENABLED").equals("true")'>
+        <then>
+            <!-- Logstash Appender -->
+            <appender name="LOGSTASH" class="net.logstash.logback.appender.LogstashTcpSocketAppender">
+                <destination>${LOGSTASH_DESTINATION}</destination>
+                <includeCallerData>true</includeCallerData>
+                <reconnectionDelay>10 seconds</reconnectionDelay>
+                <connectionTimeout>5 seconds</connectionTimeout>
+                <writeTimeout>5 seconds</writeTimeout>
+                <droppedWarnFrequency>5 minutes</droppedWarnFrequency>
+                <droppedWarnMaxBurst>10000</droppedWarnMaxBurst>
+                <encoder class="net.logstash.logback.encoder.LogstashEncoder">
+                    <fieldNames>
+                        <timestamp>timestamp</timestamp>
+                        <version>version</version>
+                        <level>level</level>
+                        <thread>thread</thread>
+                        <logger>logger</logger>
+                        <message>message</message>
+                        <context>context</context>
+                        <mdc>mdc</mdc>
+                        <tags>tags</tags>
+                        <fields>fields</fields>
+                        <stackTrace>stackTrace</stackTrace>
+                    </fieldNames>
+                    <customFields>{"serviceName": "${SERVICE_NAME}"}</customFields>
+                </encoder>
+            </appender>
+
+            <!-- Async Logstash Appender -->
+            <appender name="ASYNC_LOGSTASH" class="ch.qos.logback.classic.AsyncAppender">
+                <appender-ref ref="LOGSTASH" />
+                <includeCallerData>true</includeCallerData>
+                <queueSize>512</queueSize>
+                <discardingThreshold>0</discardingThreshold>
+                <neverBlock>true</neverBlock>
+            </appender>
+
+            <!-- Root Logger WITH Logstash -->
+            <root level="debug">
+                <appender-ref ref="ROLLING"/>
+                <appender-ref ref="CONSOLE"/>
+                <appender-ref ref="ASYNC_LOGSTASH"/>
+            </root>
+        </then>
+        <else>
+            <!-- Root Logger WITHOUT Logstash -->
+            <root level="debug">
+                <appender-ref ref="ROLLING"/>
+                <appender-ref ref="CONSOLE"/>
+            </root>
+        </else>
+    </if>
     <!-- Root Logger -->
     <root level="debug">
         <appender-ref ref="ROLLING"/>
