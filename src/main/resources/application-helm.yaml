@@ -53,18 +53,6 @@ param:
   notifications-name: kube-notifications
   notifications-service: notifications-service
 
-#
-#springdoc:
-#  api-docs:
-#    enabled: true  # Enable OpenAPI JSON
-#  swagger-ui:
-#    enabled: true  # Enable Swagger UI
-#    path: /docs  # Path where Swagger can be accessed
-#    operations-sorter: method  # Sort endpoints by HTTP method
-#    disable-swagger-default-url: true
-#    display-request-duration: true
-#  default-consumes-media-type: application/json
-#  default-produces-media-type: application/json
 
 server:
   error:
