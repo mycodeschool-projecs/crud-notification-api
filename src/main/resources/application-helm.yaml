@@ -9,6 +9,7 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
 
 
+
   jpa:
     hibernate:
       ddl-auto: update
@@ -53,6 +54,18 @@ param:
   notifications-name: kube-notifications
   notifications-service: notifications-service
 
+#
+#springdoc:
+#  api-docs:
+#    enabled: true  # Enable OpenAPI JSON
+#  swagger-ui:
+#    enabled: true  # Enable Swagger UI
+#    path: /docs  # Path where Swagger can be accessed
+#    operations-sorter: method  # Sort endpoints by HTTP method
+#    disable-swagger-default-url: true
+#    display-request-duration: true
+#  default-consumes-media-type: application/json
+#  default-produces-media-type: application/json
 
 server:
   error:
@@ -87,16 +100,16 @@ metrics:
           requests: true
 
 logging:
-#  pattern:
-#    level: '%5p [${spring.application.name:},%X{traceId:-},%X{spanId:-}]'
-#  level:
-#    root: debug
-#    org.springframework.amqp: info
-#  file:
-#    name: crud-logs.log
+  pattern:
+    level: '%5p [${spring.application.name:},%X{traceId:-},%X{spanId:-}]'
+  level:
+    root: debug
+    org.springframework.amqp: info
+  file:
+    name: crud-logs.log
   logstash:
-    enabled: false
-#    destination: logstash:3100
-#    level: OFF  # Set to ALL to enable, OFF to disable
+    enabled: true
+    destination: logstash:3100
+    level: OFF  # Set to ALL to enable, OFF to disable
 # RabbitMQ event publishing configuration
 

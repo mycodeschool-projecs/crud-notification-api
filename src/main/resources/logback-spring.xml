@@ -3,7 +3,7 @@
 
     <!-- Define the service name -->
     <!-- Define the service name -->
-    <property name="SERVICE_NAME" value="notification-service"/>
+    <property name="SERVICE_NAME" value="notifications-service"/>
 
     <!-- Read Logstash configuration from application.yaml -->
     <springProperty scope="context" name="LOGSTASH_DESTINATION" source="logging.logstash.destination" defaultValue="localhost:3100"/>
