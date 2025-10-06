@@ -87,16 +87,16 @@ metrics:
           requests: true
 
 logging:
-  pattern:
-    level: '%5p [${spring.application.name:},%X{traceId:-},%X{spanId:-}]'
-  level:
-    root: debug
-    org.springframework.amqp: info
-  file:
-    name: crud-logs.log
+#  pattern:
+#    level: '%5p [${spring.application.name:},%X{traceId:-},%X{spanId:-}]'
+#  level:
+#    root: debug
+#    org.springframework.amqp: info
+#  file:
+#    name: crud-logs.log
   logstash:
     enabled: false
-    destination: logstash:3100
-    level: OFF  # Set to ALL to enable, OFF to disable
+#    destination: logstash:3100
+#    level: OFF  # Set to ALL to enable, OFF to disable
 # RabbitMQ event publishing configuration
 
